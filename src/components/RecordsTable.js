@@ -1,10 +1,11 @@
+import { Box } from '@chakra-ui/react'
 import React from 'react'
 
 const RecordsTable = (dataRecords) => {
   return (
-    <>
-    {dataRecords.records.map((record) => (<div key={record.id}>{record.bugID}</div>))}
-    </>
+    <Box>
+    {dataRecords.records.map((record) => (<div key={record.recordID}>{record.bugID}{console.log(record)}</div>))}
+    </Box>
   )
 }
 

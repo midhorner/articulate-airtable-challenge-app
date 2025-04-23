@@ -3,7 +3,7 @@ import { Box } from '@chakra-ui/react'
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import EditTextInput from './EditTextInput';
 
-// Tanstack makes use of a column array to set table attributes/Cells take functions
+// Tanstack makes use of a column array to set table attributes/Cells take functions and props
 const columns = [
   {
     accessorKey: 'bugID',
@@ -54,6 +54,7 @@ const RecordsTable = (dataRecords) => {
     data: dataRecords.records,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    // required for row model below
   });
   return (
     <Box>
@@ -67,6 +68,7 @@ const RecordsTable = (dataRecords) => {
           )}
         </Box>
         )}
+        {/* row model uses the objects; flexRender for complex props (cell context) & data display */}
         {table.getRowModel().rows.map((row) => (
           <Box display={"flex"} flexDir={"row"} alignItems={"center"} key={row.id}>
             {row.getVisibleCells().map((cell) => (

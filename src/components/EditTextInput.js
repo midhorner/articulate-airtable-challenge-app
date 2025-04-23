@@ -32,7 +32,7 @@ const EditTextInput = ({ getValue, row, column  }) => {
             onBlur={updateAirtable}
             variant={"subtle"}
             autoresize
-            backgroundColor={"#F2F0EF"}
+            backgroundColor={"#FAFFFF"}
             fontSize={"15px"}
         />
     );

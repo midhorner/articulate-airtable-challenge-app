@@ -1,5 +1,4 @@
 'use client'
-
 import RecordsTable from "@/components/RecordsTable";
 import { Box, Button, createListCollection, Dialog, Field, Input, Select } from "@chakra-ui/react";
 import axios from "axios";
@@ -22,6 +21,40 @@ export default function Home() {
     date: '',
   }
 
+  // hooks
+  const [records, setRecords] = useState([]);
+  // for dialog (modal) setting
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  // sets form model, clears on close
+  const [formData, setFormData] = useState(initialFormData);
+
+  // API call to get records
+  // made API call a function that gets called in useEffect
+  const fetchRecords = () => {
+    axios.get(`https://api.airtable.com/v0/${base}/${table}`, {
+      headers: { Authorization: `Bearer ${apiKey}` }
+    })
+    .then((res) => setRecords(res.data.records))
+    .catch((err) => console.log(err));
+  }
+
+  // updates page after creation
+  useEffect(() => {
+    fetchRecords();
+  }, []);
+
+  // data object to pass to records table component
+  const dataRecords = records.map(record => ({
+    recordID: record.id,
+    bugID: record.fields['Bug ID'],
+    bugDescription: record.fields['Bug Description'],
+    affectedComponents: record.fields['Affected Components'],
+    priority: record.fields['Priority'],
+    status: record.fields['Status'],
+    stepsToReproduce: record.fields['Steps to Reproduce'],
+    date: record.fields['Reported Date'],
+  }));
+
   // createListCollection used in the select (dropdown) component
   const statuses = createListCollection({
     items: [
@@ -39,38 +72,42 @@ export default function Home() {
       { label: "Urgent", value: "Urgent" },
     ],
   });  
-  
-  // hooks
-  const [records, setRecords] = useState([]);
-  // for dialog (modal) setting
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  // sets form model, clears on close
-  const [formData, setFormData] = useState(initialFormData);
 
-  // API call to get records
-  useEffect(() => {
-    axios.get(`https://api.airtable.com/v0/${base}/${table}`, {
-      headers: { Authorization: `Bearer ${apiKey}` }
-    })
-    .then((res) => setRecords(res.data.records))
-    .catch((err) => console.log(err));
-  }, []);
-
+  // use all the airtable fields, fill the missing in with dummy data (from docs)
   const handleSubmit = () => {
-    console.log(formData);
-  }
-
-  // data object to pass to records table component
-  const dataRecords = records.map(record => ({
-    recordID: record.id,
-    bugID: record.fields['Bug ID'],
-    bugDescription: record.fields['Bug Description'],
-    affectedComponents: record.fields['Affected Components'],
-    priority: record.fields['Priority'],
-    status: record.fields['Status'],
-    stepsToReproduce: record.fields['Steps to Reproduce'],
-    date: record.fields['Reported Date'],
-  }));
+    axios.post(`https://api.airtable.com/v0/${base}/${table}`,
+    { 
+      "fields": {
+        "Bug ID" : formData.bugID,
+        "Bug Description" : formData.bugDescription,
+        "Steps to Reproduce" : formData.stepsToReproduce,
+        "Severity": "Medium",
+        "Affected Components" : formData.affectedComponents,
+        "Priority" : formData.priority,
+        "Status" : formData.status,
+        "Reported Date" : formData.date,
+        "Assigned Developer": [
+          "recxN4w3mWut0khj5"
+        ],
+        "Resolution Progress": "Updated the help section links to correct URLs."
+      }      
+    },
+    {
+      headers: { 
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    .then((res) => {
+      console.log(res);
+      fetchRecords();
+      setIsDialogOpen(false);
+      setFormData(initialFormData);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  };
 
   return (    
      
@@ -149,6 +186,8 @@ export default function Home() {
                           setFormData((prev) => ({ ...prev, [field]: e.target.value }))
                         }
                       />
+                      {/* airtable errors if date not in correct format */}
+                      <Field.HelperText>{field == 'date' ? 'Enter Date as YYYY-MM-DD' : ''}</Field.HelperText>
                     </Field.Root>
                   );
                 })}

@@ -52,9 +52,9 @@ const DropdownInput = ({ getValue, row, column }) => {
         </Select.Control>
         <Portal>
             <Select.Positioner>
-            <Select.Content>
+            <Select.Content backgroundColor={"#FAFFFF"}>
                 {dropdownItems.items.map((item) => (
-                <Select.Item item={item} key={item.value} onClick={() => {updateAirtable(item.value)}}>
+                <Select.Item backgroundColor={"#FAFFFF"} color={"black"} item={item} key={item.value} onClick={() => {updateAirtable(item.value)}}>
                     {item.label}
                     <Select.ItemIndicator />
                 </Select.Item>

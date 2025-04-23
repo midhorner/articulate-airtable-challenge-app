@@ -1,4 +1,4 @@
-import { Select, Portal, createListCollection } from "@chakra-ui/react"
+import { createListCollection, Portal, Select } from "@chakra-ui/react"
 import { useState } from "react";
 // Airtable API key
 var Airtable = require('airtable');
@@ -52,9 +52,9 @@ const DropdownInput = ({ getValue, row, column }) => {
         </Select.Control>
         <Portal>
             <Select.Positioner>
-            <Select.Content>
+            <Select.Content backgroundColor={"#FAFFFF"}>
                 {dropdownItems.items.map((item) => (
-                <Select.Item item={item} key={item.value} onClick={() => {updateAirtable(item.value)}}>
+                <Select.Item backgroundColor={"#FAFFFF"} color={"black"} item={item} key={item.value} onClick={() => {updateAirtable(item.value)}}>
                     {item.label}
                     <Select.ItemIndicator />
                 </Select.Item>

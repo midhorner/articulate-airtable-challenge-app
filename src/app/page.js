@@ -1,7 +1,7 @@
 'use client'
 
 import RecordsTable from "@/components/RecordsTable";
-import { Box, Button, Dialog, Field, Input, Select } from "@chakra-ui/react";
+import { Box, Button, createListCollection, Dialog, Field, Input, Select } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -21,6 +21,24 @@ export default function Home() {
     stepsToReproduce: '',
     date: '',
   }
+
+  // createListCollection used in the select (dropdown) component
+  const statuses = createListCollection({
+    items: [
+      { label: "New", value: "New" },
+      { label: "In Progress", value: "In Progress" },
+      { label: "Resolved", value: "Resolved" },
+      { label: "Closed", value: "Closed" },
+    ],
+  });  
+  const priorities = createListCollection({
+    items: [
+      { label: "Low", value: "Low" },
+      { label: "Medium", value: "Medium" },
+      { label: "High", value: "High" },
+      { label: "Urgent", value: "Urgent" },
+    ],
+  });  
   
   // hooks
   const [records, setRecords] = useState([]);
@@ -37,6 +55,10 @@ export default function Home() {
     .then((res) => setRecords(res.data.records))
     .catch((err) => console.log(err));
   }, []);
+
+  const handleSubmit = () => {
+    console.log(formData);
+  }
 
   // data object to pass to records table component
   const dataRecords = records.map(record => ({
@@ -75,8 +97,46 @@ export default function Home() {
                 {Object.entries(formData).map(([field, value]) => {
                   // fields display based off initialform object, used some regex and hardcode to fix
                   const label = field == 'bugID' ? 'Bug ID' : field.replace(/([A-Z])/g, ' $1');
-                  return (
-                    // used to add help text, and error messages
+                  // dropdowns for status and priority
+                  if (field === 'status' || field === 'priority') {
+                    const dropdownItems = field === 'priority' ? priorities : statuses;
+                    return (
+                      // field used to add help text, and error messages
+                      <Field.Root key={field} name={field}>
+                        <Field.Label textTransform={"capitalize"}>
+                          {label}
+                        </Field.Label>
+
+                        <Select.Root collection={dropdownItems}>
+                        <Select.HiddenSelect />
+                        <Select.Control>
+                          <Select.Trigger>
+                            <Select.ValueText />
+                          </Select.Trigger>
+                          <Select.IndicatorGroup>
+                            <Select.Indicator />
+                          </Select.IndicatorGroup>
+                        </Select.Control>
+                          {/* no Portal before Positioner (like the docs say), was breaking the z-index*/}
+                          <Select.Positioner zIndex={"popover"}>
+                            <Select.Content>
+                            {dropdownItems.items.map((item) => (
+                              <Select.Item item={item} key={item.value} onClick={() =>
+                                // spread so it doesn't overwrite everything else
+                                setFormData((prev) => ({ ...prev, [field]: item.value }))
+                              }>
+                                    {item.label}
+                                    <Select.ItemIndicator />
+                                </Select.Item>
+                                ))}
+                            </Select.Content>
+                          </Select.Positioner>
+                        </Select.Root>
+                      </Field.Root>
+                    );
+                  }
+                  // all other fields as text inputs
+                  return (                    
                     <Field.Root key={field} name={field}>
                       <Field.Label textTransform={"capitalize"}>
                         {label}
@@ -85,6 +145,7 @@ export default function Home() {
                         value={value}
                         name={field}
                         onChange={(e) =>
+                          // spread so it doesn't overwrite everything else
                           setFormData((prev) => ({ ...prev, [field]: e.target.value }))
                         }
                       />
@@ -96,7 +157,7 @@ export default function Home() {
                 <Button variant={"ghost"} onClick={() => setIsDialogOpen(false)}>
                   Cancel
                 </Button>
-                <Button>
+                <Button onClick={handleSubmit}>
                   Save
                 </Button>
               </Dialog.Footer>

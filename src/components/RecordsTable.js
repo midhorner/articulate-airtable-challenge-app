@@ -2,6 +2,7 @@ import React from 'react'
 import { Box } from '@chakra-ui/react'
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import EditTextInput from './EditTextInput';
+import DropdownInput from './DropdownInput';
 
 // Tanstack makes use of a column array to set table attributes/Cells take functions and props
 const columns = [
@@ -9,7 +10,7 @@ const columns = [
     accessorKey: 'bugID',
     header: "Bug ID",
     size: 220,
-    cell: (props) => <p>{props.getValue()}</p>
+    cell: EditTextInput
   },
   {
     accessorKey: 'bugDescription',
@@ -27,13 +28,13 @@ const columns = [
     accessorKey: 'priority',
     header: "Priority",
     size: 150,
-    cell: (props) => <p>{props.getValue()}</p>
+    cell: DropdownInput
   },
   {
     accessorKey: 'status',
     header: "Status",
     size: 150,
-    cell: (props) => <p>{props.getValue()}</p>
+    cell: DropdownInput
   },
   {
     accessorKey: 'stepsToReproduce',

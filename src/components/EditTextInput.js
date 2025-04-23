@@ -3,7 +3,7 @@ import { Textarea } from "@chakra-ui/react";
 import { useState } from 'react';
 // Airtable API key
 var Airtable = require('airtable');
-var base = new Airtable({apiKey: 'pat9DSbh293oCwas2.d1752f597897fb0c291e1351252b15d4ad253777ade95ffe0536674c334ccbb7'}).base('appA2Q8AsRUbmN7jE');
+var base = new Airtable({apiKey: ''}).base('appA2Q8AsRUbmN7jE');
 
 // cell context props
 const EditTextInput = ({ getValue, row, column  }) => {

@@ -5,7 +5,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 // Set Airtable API info into variables
-const apiKey = 'pat9DSbh293oCwas2.d1752f597897fb0c291e1351252b15d4ad253777ade95ffe0536674c334ccbb7';
+const apiKey = '';
 const base = 'appA2Q8AsRUbmN7jE';
 const table = 'Bugs';
 
